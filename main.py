@@ -27,7 +27,6 @@ class TkinterWindow:
         self.window.configure(background='white')
         self.window.title("Cipher Gui")
         self.window.geometry("800x150")
-        self.window.protocol("WM_DELETE_WINDOW", self.on_cancel)
         self.source_text = tk.StringVar()
         self.source_text.set("Plaintext")
         self.source = tk.Entry(self.window,font='Calibri 13',textvariable=self.source_text)
@@ -51,8 +50,6 @@ class TkinterWindow:
     def on_enter_target(self,_):
         self.source_text.set(decrypt(self.target_text.get()))
     
-    def on_cancel(self):
-        self.window.destroy()
 
 
 
