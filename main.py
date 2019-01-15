@@ -23,10 +23,11 @@ def encrypt(plaintext):
 decrypt = encrypt
 
 
-class TkinterWindow:
+class CipherGUI:
+    ciphers = {name:__import__(name) for name in ('atbash',)}
 
-    def __init__(self):
-
+    def __init__(self,current='atbash'):
+        self.current = 'atbash'
         self.window = tk.Tk()
         self.window.configure(background='white')
         self.window.title("Cipher Gui")
@@ -48,10 +49,10 @@ class TkinterWindow:
         self.window.mainloop()
 
     def on_enter_source(self, _):
-        self.target_text.set(encrypt(self.source_text.get()))
+        self.target_text.set(self.ciphers[self.current].encrypt(self.source_text.get()))
 
     def on_enter_target(self, _):
-        self.source_text.set(decrypt(self.target_text.get()))
+        self.source_text.set(self.ciphers[self.current].decrypt(self.target_text.get()))
 
 
-TkinterWindow()
+CipherGUI()
