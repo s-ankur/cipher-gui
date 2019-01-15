@@ -11,7 +11,7 @@ letter becomes the last letter, the second letter becomes the second to last let
 import string
 
 
-def encrypt_char_atbash(char):
+def encrypt_letter(letter):
     if char in string.ascii_lowercase:
         return string.ascii_lowercase[-(1 + string.ascii_lowercase.index(char))]
     elif char in string.ascii_uppercase:
@@ -20,7 +20,7 @@ def encrypt_char_atbash(char):
 
 
 def encrypt(plaintext, key=''):
-    return ''.join(list(map(encrypt_char_atbash, plaintext)))
+    return ''.join(list(map(encrypt_letter, plaintext)))
 
 
 decrypt = crack = encrypt

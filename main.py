@@ -6,7 +6,7 @@ Encrypt Badly
 import tkinter as tk
 from tkinter.constants import *
 
-AVAILABLE_CIPHERS = ('atbash','caesar')
+AVAILABLE_CIPHERS = ('atbash', 'caesar')
 
 
 class CipherGUI:
@@ -22,7 +22,7 @@ class CipherGUI:
         self.window.configure(background='white')
         self.window.title("Cipher Gui")
         self.window.geometry("800x150")
-        
+
         self.source_text = tk.StringVar()
         self.source_text.set("Plaintext")
         self.source = tk.Entry(self.window, font='Calibri 13', textvariable=self.source_text)
@@ -44,6 +44,7 @@ class CipherGUI:
 
     def on_enter_target(self, _):
         self.source_text.set(self.ciphers[self.current].decrypt(self.target_text.get()))
+
 
 if __name__ == '__main__':
     CipherGUI()
