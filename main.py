@@ -3,35 +3,26 @@
 """
 Encrypt Badly
 """
-import string
 import tkinter as tk
 from tkinter.constants import *
 
-
-def encrypt_char(char):
-    if char in string.ascii_lowercase:
-        return string.ascii_lowercase[-(1 + string.ascii_lowercase.index(char))]
-    elif char in string.ascii_uppercase:
-        return string.ascii_uppercase[-(1 + string.ascii_uppercase.index(char))]
-    return char
-
-
-def encrypt(plaintext):
-    return ''.join(list(map(encrypt_char, plaintext)))
-
-
-decrypt = encrypt
+AVAILABLE_CIPHERS = ('atbash','caesar')
 
 
 class CipherGUI:
-    ciphers = {name: __import__(name) for name in ('atbash',)}
+    ciphers = {name: __import__(name) for name in AVAILABLE_CIPHERS}
 
     def __init__(self, current='atbash'):
-        self.current = 'atbash'
+        self.current = current
+        self.create_gui()
+
+    def create_gui(self):
         self.window = tk.Tk()
+        self.w = tk.Tk()
         self.window.configure(background='white')
         self.window.title("Cipher Gui")
         self.window.geometry("800x150")
+        
         self.source_text = tk.StringVar()
         self.source_text.set("Plaintext")
         self.source = tk.Entry(self.window, font='Calibri 13', textvariable=self.source_text)
@@ -54,5 +45,5 @@ class CipherGUI:
     def on_enter_target(self, _):
         self.source_text.set(self.ciphers[self.current].decrypt(self.target_text.get()))
 
-
-CipherGUI()
+if __name__ == '__main__':
+    CipherGUI()

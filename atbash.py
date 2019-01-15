@@ -1,9 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import string
+"""
+The Atbash cipher is a particular type of monoalphabetic cipher formed by taking the
+alphabet (or abjad, syllabary, etc.) and mapping it to its reverse, so that the first
+letter becomes the last letter, the second letter becomes the second to last letter, and so on
+'a' -> 'z' , 'b' -> 'y' etc
+"""
 
-# ATBASH CIPHER
-# 'a' -> 'z' , 'b' -> 'y' etc
+
+import string
 
 
 def encrypt_char_atbash(char):
@@ -14,8 +19,8 @@ def encrypt_char_atbash(char):
     return char
 
 
-def encrypt(plaintext):
+def encrypt(plaintext, key=''):
     return ''.join(list(map(encrypt_char_atbash, plaintext)))
 
 
-decrypt = encrypt
+decrypt = crack = encrypt
