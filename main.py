@@ -24,9 +24,9 @@ decrypt = encrypt
 
 
 class CipherGUI:
-    ciphers = {name:__import__(name) for name in ('atbash',)}
+    ciphers = {name: __import__(name) for name in ('atbash',)}
 
-    def __init__(self,current='atbash'):
+    def __init__(self, current='atbash'):
         self.current = 'atbash'
         self.window = tk.Tk()
         self.window.configure(background='white')
