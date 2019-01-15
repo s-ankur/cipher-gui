@@ -18,9 +18,10 @@ def encrypt_letter(letter, key):
 
 
 def encrypt(plaintext, key):
-    key = ord(key.lower())-ord('a')
+    key = ord(key.lower()[0]) - ord('a')
     return ''.join(list(map(lambda x: encrypt_letter(x, key), plaintext)))
 
+
 def decrypt(ciphertext, key):
-    key = - (ord(key.lower())-ord('a'))
+    key = - (ord(key.lower()[0]) - ord('a'))
     return ''.join(list(map(lambda x: encrypt_letter(x, key), ciphertext)))

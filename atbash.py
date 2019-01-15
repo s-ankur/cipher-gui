@@ -12,11 +12,11 @@ import string
 
 
 def encrypt_letter(letter):
-    if char in string.ascii_lowercase:
-        return string.ascii_lowercase[-(1 + string.ascii_lowercase.index(char))]
-    elif char in string.ascii_uppercase:
-        return string.ascii_uppercase[-(1 + string.ascii_uppercase.index(char))]
-    return char
+    if letter.islower():
+        return string.ascii_lowercase[-(1 + string.ascii_lowercase.index(letter))]
+    elif letter.isupper():
+        return string.ascii_uppercase[-(1 + string.ascii_uppercase.index(letter))]
+    return letter
 
 
 def encrypt(plaintext, key=''):
