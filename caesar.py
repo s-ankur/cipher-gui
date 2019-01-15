@@ -11,12 +11,16 @@ The method is named after Julius Caesar, who used it in his private corresponden
 
 def encrypt_letter(letter, key):
     if letter.islower():
-        return chr((ord(letter) + ord(key) - 2 * ord('a')) % 26 + ord('a'))
+        return chr((ord(letter) + key - ord('a')) % 26 + ord('a'))
     if letter.isupper():
-        return chr((ord(letter) + ord(key) - ord('a') - ord('A')) % 26 + ord('A'))
+        return chr((ord(letter) + key - ord('A')) % 26 + ord('A'))
     return letter
 
 
 def encrypt(plaintext, key):
-    key = key.lower()
+    key = ord(key.lower())-ord('a')
     return ''.join(list(map(lambda x: encrypt_letter(x, key), plaintext)))
+
+def decrypt(ciphertext, key):
+    key = - (ord(key.lower())-ord('a'))
+    return ''.join(list(map(lambda x: encrypt_letter(x, key), ciphertext)))
