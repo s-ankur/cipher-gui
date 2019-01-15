@@ -18,7 +18,6 @@ class CipherGUI:
 
     def create_gui(self):
         self.window = tk.Tk()
-        self.w = tk.Tk()
         self.window.configure(background='white')
         self.window.title("Cipher Gui")
         self.window.geometry("800x150")
