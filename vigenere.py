@@ -5,7 +5,7 @@ The Vigenère cipher is a method of encrypting alphabetic text by using a
 series of interwoven Caesar ciphers, based on the letters of a keyword.
 It is a form of polyalphabetic substitution.
 """
-from itertools import starmap,cycle
+from itertools import cycle
 import caesar
 
 
