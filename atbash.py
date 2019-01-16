@@ -23,4 +23,7 @@ def encrypt(plaintext, key=''):
     return ''.join(list(map(encrypt_letter, plaintext)))
 
 
-decrypt = crack = encrypt
+decrypt = encrypt
+
+def crack(plaintext):
+    return encrypt(plaintext),''
