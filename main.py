@@ -7,7 +7,7 @@ import textwrap
 import tkinter as tk
 from tkinter.constants import *
 
-AVAILABLE_CIPHERS = ('atbash', 'caesar')
+AVAILABLE_CIPHERS = ('atbash', 'caesar','vigenere')
 
 
 class CipherGUI:
