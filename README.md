@@ -2,3 +2,4 @@
 # cipher-gui
 Computer Security Assignment __(CSE-537)__ <br>
 _Poorly encrypted things_
+![Demo](demo.png)
