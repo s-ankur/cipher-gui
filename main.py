@@ -5,6 +5,7 @@ Encrypt Badly
 """
 import textwrap
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter.constants import *
 
 AVAILABLE_CIPHERS = ('atbash', 'caesar','vigenere')
@@ -20,11 +21,11 @@ class CipherGUI:
 
     def create_options(self):
         self.options = tk.Toplevel()
-        tk.Label(self.options, text='Cipher: ').grid(column=0, row=0)
+        ttk.Label(self.options, text='Cipher: ').grid(column=0, row=0)
         self.options.title("Options")
 
         self.cipher_docs_string = tk.StringVar()
-        self.cipher_docs = tk.Label(self.options, textvariable=self.cipher_docs_string, justify=LEFT)
+        self.cipher_docs = ttk.Label(self.options, textvariable=self.cipher_docs_string, justify=LEFT)
         self.cipher_docs.grid(column=0, row=1, rowspan=2, columnspan=4)
         self.cipher_choice_string = tk.StringVar()
         self.cipher_choice_string.trace('w', self.on_cipher)
@@ -32,10 +33,10 @@ class CipherGUI:
 
         self.cipher_choice = tk.OptionMenu(self.options, self.cipher_choice_string, *AVAILABLE_CIPHERS)
         self.cipher_choice.grid(row=0, column=1)
-        tk.Button(self.options, text="Encrypt", command=self.on_encrypt).grid(row=4, column=0)
-        tk.Button(self.options, text="Decrypt", command=self.on_decrypt).grid(row=4, column=1)
-        tk.Button(self.options, text="Hack", command=self.on_crack).grid(row=4, column=2)
-        tk.Button(self.options, text="Clear", command=self.on_clear).grid(row=4, column=3)
+        ttk.Button(self.options, text="Encrypt", command=self.on_encrypt).grid(row=4, column=0)
+        ttk.Button(self.options, text="Decrypt", command=self.on_decrypt).grid(row=4, column=1)
+        ttk.Button(self.options, text="Hack", command=self.on_crack).grid(row=4, column=2)
+        ttk.Button(self.options, text="Clear", command=self.on_clear).grid(row=4, column=3)
 
 
     def create_textbox(self):
@@ -47,13 +48,13 @@ class CipherGUI:
 
         self.key_string = tk.StringVar()
         self.key_string.set("Key")
-        self.key = tk.Entry(self.textbox, font='Calibri 13', textvariable=self.key_string)
+        self.key = ttk.Entry(self.textbox, font='Calibri 13', textvariable=self.key_string)
         self.plaintext_string = tk.StringVar()
         self.plaintext_string.set("Plaintext")
-        self.plaintext = tk.Entry(self.textbox, font='Calibri 13', textvariable=self.plaintext_string)
+        self.plaintext = ttk.Entry(self.textbox, font='Calibri 13', textvariable=self.plaintext_string)
         self.ciphertext_string = tk.StringVar()
         self.ciphertext_string.set("Ciphertext")
-        self.ciphertext = tk.Entry(self.textbox, font='Calibri 13', textvariable=self.ciphertext_string)
+        self.ciphertext = ttk.Entry(self.textbox, font='Calibri 13', textvariable=self.ciphertext_string)
 
         self.key.pack(side=TOP, fill=BOTH, expand=0)
         self.key.configure(background='white')
@@ -68,7 +69,7 @@ class CipherGUI:
         return self.ciphers[self.cipher_choice_string.get()]
 
     def on_cipher(self, *args):
-        self.cipher_docs_string.set('\n'.join(textwrap.wrap(self.get_cipher().__doc__, 50)))
+        self.cipher_docs_string.set('\n'.join(textwrap.wrap(self.get_cipher().__doc__, 60)))
 
     def on_encrypt(self, _='unused'):
         self.ciphertext_string.set(self.get_cipher().encrypt(self.plaintext_string.get(), self.key_string.get()))
