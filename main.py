@@ -8,7 +8,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-AVAILABLE_CIPHERS = ('atbash', 'caesar','vigenere')
+AVAILABLE_CIPHERS = ('atbash', 'caesar', 'vigenere')
 
 
 class CipherGUI:
@@ -37,7 +37,6 @@ class CipherGUI:
         ttk.Button(self.options, text="Decrypt", command=self.on_decrypt).grid(row=4, column=1)
         ttk.Button(self.options, text="Hack", command=self.on_crack).grid(row=4, column=2)
         ttk.Button(self.options, text="Clear", command=self.on_clear).grid(row=4, column=3)
-
 
     def create_textbox(self):
         self.textbox = tk.Tk()
@@ -86,7 +85,6 @@ class CipherGUI:
         self.ciphertext_string.set('')
         self.key_string.set('')
         self.plaintext_string.set('')
-
 
 
 if __name__ == '__main__':

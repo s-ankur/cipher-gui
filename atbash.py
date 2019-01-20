@@ -25,5 +25,6 @@ def encrypt(plaintext, key=''):
 
 decrypt = encrypt
 
+
 def crack(plaintext):
-    return encrypt(plaintext),''
+    return encrypt(plaintext), ''
