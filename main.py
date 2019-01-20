@@ -35,6 +35,8 @@ class CipherGUI:
         tk.Button(self.options, text="Encrypt", command=self.on_encrypt).grid(row=4, column=0)
         tk.Button(self.options, text="Decrypt", command=self.on_decrypt).grid(row=4, column=1)
         tk.Button(self.options, text="Hack", command=self.on_crack).grid(row=4, column=2)
+        tk.Button(self.options, text="Clear", command=self.on_clear).grid(row=4, column=3)
+
 
     def create_textbox(self):
         self.textbox = tk.Tk()
@@ -78,6 +80,12 @@ class CipherGUI:
         plaintext, key = self.get_cipher().crack(self.ciphertext_string.get())
         self.plaintext_string.set(plaintext)
         self.key_string.set(key)
+
+    def on_clear(self, _='unused'):
+        self.ciphertext_string.set('')
+        self.key_string.set('')
+        self.plaintext_string.set('')
+
 
 
 if __name__ == '__main__':
