@@ -7,7 +7,7 @@ import string
 import random
 
 
-def test(cipher):
+def test_correctness(cipher):
     plaintext = "".join([random.choice(string.printable) for i in range(100)])
     key = "".join([random.choice(string.ascii_letters) for i in range(10)])
     ciphertext = cipher.encrypt(plaintext, key)
@@ -17,12 +17,16 @@ def test(cipher):
 
 if __name__ == '__main__':
     from main import AVAILABLE_CIPHERS
-
     for cipher in AVAILABLE_CIPHERS:
         cipher_module = __import__(cipher)
+        print("Testing for Correctness of %s Cipher" % cipher)
+        passed = failed = 0
         for i in range(100):
-            status, plaintext, key = test(cipher_module)
+            status, plaintext, key = test_correctness(cipher_module)
             if not status:
+                failed += 1
                 print('Cipher %s Failed Test (%s,%s)' % (cipher, plaintext, key))
-        print('Tested', cipher)
+            else:
+                passed += 1
+        print("Correctness Tested: Passed %d Failed %d" % (passed, failed))
     print('Tests Completed')
