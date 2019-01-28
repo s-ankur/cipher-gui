@@ -10,6 +10,7 @@ letter becomes the last letter, the second letter becomes the second to last let
 
 import string
 
+cipher_type = 'text'
 
 def encrypt_letter(letter):
     if letter.islower():

@@ -12,6 +12,7 @@ import caesar
 Kp = 0.067
 Kt = 0.0385
 
+cipher_type = 'text'
 
 def encrypt(plaintext, key):
     key = map(lambda x: ord(x) - ord('a'), key.lower())

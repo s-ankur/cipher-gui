@@ -13,6 +13,7 @@ import string
 
 FREQ_LETTERS = 'ETAOINSRHDLUCMFYWGPBVKXQJZ'
 
+cipher_type = 'text'
 
 def encrypt_letter(letter, key):
     if letter.islower():
