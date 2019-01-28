@@ -7,9 +7,10 @@ Currently supports atbash, caesar and vigenere cipher <br>
 Currently only correctness of each algorithm is tested but will add statistical tests soon.
 
 # Usage
+
 ```python3 main.py```<br>
-You should open `main.py` with `idle` and then run it so that it looks better.
-To test all the algorithms, run
+Gui looks much better if it is run through `idle`.<br>
+To test all the algorithms, run<br>
 ``` python3 test.py``` <br>
 
 
