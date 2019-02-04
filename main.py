@@ -8,7 +8,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-AVAILABLE_CIPHERS = ('atbash', 'caesar', 'vigenere')
+AVAILABLE_CIPHERS = ('atbash', 'caesar', 'vigenere','des')
 
 
 class CipherGUI:
