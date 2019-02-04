@@ -1,5 +1,9 @@
 #-*- coding: utf8 -*-
+"""
+DES CIPHER
+Key should be 8 characters
 
+"""
 #Initial permut matrix for the datas
 PI = [58, 50, 42, 34, 26, 18, 10, 2,
       60, 52, 44, 36, 28, 20, 12, 4,

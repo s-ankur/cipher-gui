@@ -88,4 +88,4 @@ class CipherGUI:
 
 
 if __name__ == '__main__':
-    CipherGUI()
+    c=CipherGUI()
