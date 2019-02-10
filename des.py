@@ -2,10 +2,14 @@
 """
 DES CIPHER
 Key should be 8 characters
-
 """
+
+cipher_type = 'block'
+
+N_ROUNDS = 16
+
 #Initial permut matrix for the datas
-PI = [58, 50, 42, 34, 26, 18, 10, 2,
+P_INITIAL = [58, 50, 42, 34, 26, 18, 10, 2,
       60, 52, 44, 36, 28, 20, 12, 4,
       62, 54, 46, 38, 30, 22, 14, 6,
       64, 56, 48, 40, 32, 24, 16, 8,
@@ -101,7 +105,7 @@ P = [16, 7, 20, 21, 29, 12, 28, 17,
      19, 13, 30, 6, 22, 11, 4, 25]
 
 #Final permut for datas after the 16 rounds
-PI_1 = [40, 8, 48, 16, 56, 24, 64, 32,
+P_INITIAL_1 = [40, 8, 48, 16, 56, 24, 64, 32,
         39, 7, 47, 15, 55, 23, 63, 31,
         38, 6, 46, 14, 54, 22, 62, 30,
         37, 5, 45, 13, 53, 21, 61, 29,
@@ -112,17 +116,6 @@ PI_1 = [40, 8, 48, 16, 56, 24, 64, 32,
 
 #Matrix that determine the shift for each round of keys
 SHIFT = [1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1]
-
-def string_to_bit_array(text):#Convert a string into a list of bits
-    array = list()
-    for char in text:
-        binval = binvalue(char, 8)#Get the char value on one byte
-        array.extend([int(x) for x in list(binval)]) #Add the bits to the final list
-    return array
-
-def bit_array_to_string(array): #Recreate the string from the bit array
-    res = ''.join([chr(int(y,2)) for y in [''.join([str(x) for x in bytes]) for bytes in  nsplit(array,8)]])   
-    return res
 
 def binvalue(val, bitsize): #Return the binary value as a string of the given size 
     binval = bin(val)[2:] if isinstance(val, int) else bin(ord(val))[2:]
@@ -135,103 +128,112 @@ def binvalue(val, bitsize): #Return the binary value as a string of the given si
 def nsplit(s, n):#Split a list into sublists of size "n"
     return [s[k:k+n] for k in range(0, len(s), n)]
 
-ENCRYPT=1
-DECRYPT=0
     
-def removePadding(data):#Remove the padding of the plain text (it assume there is padding)
+def remove_padding(data):#Remove the padding of the plain text (it assume there is padding)
     pad_len = ord(data[-1])
     return data[:-pad_len]
 
 
-def substitute( d_e):#Substitute bytes using SBOX
-    subblocks = nsplit(d_e, 6)#Split bit array into sublist of 6 bits
+def substitute( d_e):
+    subblocks = nsplit(d_e, 6)
     result = list()
-    for i in range(len(subblocks)): #For all the sublists
+    for i in range(len(subblocks)): 
         block = subblocks[i]
-        row = int(str(block[0])+str(block[5]),2)#Get the row with the first and last bit
-        column = int(''.join([str(x) for x in block[1:][:-1]]),2) #Column is the 2,3,4,5th bits
-        val = S_BOX[i][row][column] #Take the value in the SBOX appropriated for the round (i)
-        bin = binvalue(val, 4)#Convert the value to binary
-        result += [int(x) for x in bin]#And append it to the resulting list
+        row = int(str(block[0])+str(block[5]),2)
+        column = int(''.join([str(x) for x in block[1:][:-1]]),2) 
+        val = S_BOX[i][row][column] 
+        bin = binvalue(val, 4)
+        result += [int(x) for x in bin]
     return result
 
-
-def xor(t1, t2):#Apply a xor and return the resulting list
+def xor(t1, t2):
     return [x^y for x,y in zip(t1,t2)]
-
     
-def expand( block, table):#Do the exact same thing than permut but for more clarity has been renamed
-    return [block[x-1] for x in table]
-   
-    
-def shift( g, d, n): #Shift a list of the given value
+def shift( g, d, n): 
     return g[n:] + g[:n], d[n:] + d[:n]
 
-    
-def permut(block, table):#Permut the given block using the given table (so generic method)
+def permute(block, table):
     return [block[x-1] for x in table]
 
-
-def generatekeys(key):#Algorithm that generates all the keys
-    keys = []
-    key = string_to_bit_array(key)
-    key = permut(key, CP_1) #Apply the initial permut on the key
-    g, d = nsplit(key, 28) #Split it in to (g->LEFT),(d->RIGHT)
-    for i in range(16):#Apply the 16 rounds
-        g, d = shift(g, d, SHIFT[i]) #Apply the shift associated with the round (not always 1)
-        tmp = g + d #Merge them
-        keys.append(permut(tmp, CP_2)) #Apply the permut to get the Ki
-    return keys
-
-
-def addPadding(text):#Add padding to the datas using PKCS5 spec.
-    pad_len = 8 - (len(text) % 8)
+def add_padding(text):
+    pad_len = len(text) % 8
     text += pad_len * chr(pad_len)
     return text
 
-def run( key, text, action=ENCRYPT, padding=True):
+def validate_text(text):
+    if len(text) % 8 != 0:
+        raise Exception("Data size should be multiple of 8")
+
+def validate_key(key):
     if len(key) < 8:
         raise Exception("Key Should be 8 bytes long")
-    elif len(key) > 8:
-        key = key[:8] #If key size is above 8bytes, cut to be 8bytes long
+    return (key[:8])
 
-    
-    if padding and action==ENCRYPT:
-        text=addPadding(text)
-    elif len(text) % 8 != 0:#If not padding specified data size must be multiple of 8 bytes
-        raise Exception("Data size should be multiple of 8")
-    
-    keys=generatekeys(key) #Generate all the keys
-    text_blocks = nsplit(text, 8) #Split the text in blocks of 8 bytes so 64 bits
-    result = list()
-    for block in text_blocks:#Loop over all the blocks of data
-        block = string_to_bit_array(block)#Convert the block in bit array
-        block = permut(block,PI)#Apply the initial permutation
-        g, d = nsplit(block, 32) #g(LEFT), d(RIGHT)
-        tmp = None
-        for i in range(16): #Do the 16 rounds
-            d_e = expand(d, E) #Expand d to match Ki size (48bits)
-            if action == ENCRYPT:
-                tmp = xor(keys[i], d_e)#If encrypt use Ki
-            else:
-                tmp = xor(keys[15-i], d_e)#If decrypt start by the last key
-            tmp = substitute(tmp) #Method that will apply the SBOXes
-            tmp = permut(tmp, P)
-            tmp = xor(g, tmp)
-            g = d
-            d = tmp
-        result += permut(d+g, PI_1) #Do the last permut and append the result to result
-    final_res = bit_array_to_string(result)
-    if padding and action==DECRYPT:
-        return removePadding(final_res) #Remove the padding if decrypt and padding is true
-    else:
-        return final_res #Return the final string of data ciphered/deciphered
+def generate_keys(key):
+    key = validate_key(key)
+    key=string_to_bit_array(key)
+    key = permute(key, CP_1)
+    left, right = nsplit(key, 28) 
+    for i in range(N_ROUNDS):
+        left, right = shift(left, right, SHIFT[i]) 
+        yield permute(left + right, CP_2)
+
+def string_to_bit_array(text):#Convert a string into a list of bits
+    array = list()
+    for char in text:
+        binval = binvalue(char, 8)#Get the char value on one byte
+        array.extend([int(x) for x in list(binval)]) #Add the bits to the final list
+    return array
+
+def bit_array_to_string(array): #Recreate the string from the bit array
+    res = ''.join([chr(int(y,2)) for y in [''.join([str(x) for x in bytes]) for bytes in  nsplit(array,8)]])   
+    return res
 
 
-def encrypt(text,key):
-    return run(key, text, ENCRYPT)
+def block_iter(block,keys):
+    left, right = nsplit(block, 32)
+    for key in keys:
+        right_expanded = permute(right, E)
+        d_e =right_expanded
+       # import pdb;pdb.set_trace()
 
-def decrypt(text,key):
-    return run(key, text, DECRYPT)
+        tmp = xor(key, right_expanded)
+      #  import pdb;pdb.set_trace()
+        tmp = substitute(tmp) 
+        tmp = permute(tmp, P)
+        tmp = xor(left, tmp)
+        left = right
+        right = tmp
+        yield  right+left
 
+def feistel_network(text,keys):
+    text_blocks = nsplit(text, 8)
+    text_output = []
+    for text_block in text_blocks:
+        block = string_to_bit_array(text_block)
+        block = permute(block,P_INITIAL)
+        bi=list(block_iter(block,keys))
+        block= bi[-1]
+        block=permute(block, P_INITIAL_1)
+        text_block = bit_array_to_string(block)
+        text_output.append(text_block)
+    return ''.join(text_output)
 
+def encrypt(plaintext,key):
+    plaintext=add_padding(plaintext)
+    keys = list(generate_keys(key))
+    return feistel_network(plaintext,keys)
+
+def decrypt(ciphertext,key):
+    keys = list(generate_keys(key))
+    keys.reverse()
+    plaintext = feistel_network(ciphertext,keys)
+    return (plaintext)
+
+if __name__ == "__main__":
+    key = "secret_k"
+    text= "Hello wo"
+    r = encrypt(text,key)
+    r2 = decrypt(r,key)
+    print ("Ciphered: %r" % r)
+    print ("Deciphered: ", r2)
