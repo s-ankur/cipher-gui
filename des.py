@@ -1,4 +1,5 @@
-#-*- coding: utf8 -*-
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 """
 DES CIPHER
 Key should be 8 characters
@@ -195,10 +196,7 @@ def block_iter(block,keys):
     for key in keys:
         right_expanded = permute(right, E)
         d_e =right_expanded
-       # import pdb;pdb.set_trace()
-
         tmp = xor(key, right_expanded)
-      #  import pdb;pdb.set_trace()
         tmp = substitute(tmp) 
         tmp = permute(tmp, P)
         tmp = xor(left, tmp)
