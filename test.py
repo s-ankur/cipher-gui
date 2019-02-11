@@ -6,6 +6,10 @@ Common Testing Program for all ciphers
 import string
 import random
 from collections import Counter
+import time
+from pprint import pprint
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-whitegrid')
 
 ENGLISH_FREQ = Counter({
     'A':0.08167,
@@ -37,64 +41,88 @@ ENGLISH_FREQ = Counter({
 })
 
 def gen_text(n=100):
-    return "".join([random.choice(string.printable) for i in range(n)])
+    return "".join([random.choice(string.ascii_uppercase) for i in range(n)])
 
 def gen_key(n=10):
     return "".join([random.choice(string.ascii_letters) for i in range(n)])
 
 def get_freq(text):
-    c= Counter(filter(str.isalpha,text.upper()))
+    c=Counter(string.ascii_uppercase)
+    c.update(filter(lambda s: s in string.ascii_uppercase  ,text.upper()))
     n = len(text)
     for i in c:
-        c[i]/=n
+        c[i]-=1
     return c.most_common()
 
 def gen_block(n=8):
     return random.getrandbits(n*8)
 
 def correctness(cipher):
-    plaintext = gen_text()
+    plaintext = gen_text(16)
     key = gen_key()
     ciphertext = cipher.encrypt(plaintext,key)
     decrypttext = cipher.decrypt(ciphertext, key)
     return {'passed':decrypttext == plaintext , 'plaintext':plaintext, 'key':key,'ciphertext':ciphertext,'decrypttext':decrypttext}
 
-def simmons(cipher):
-    key=gen_key()
+def simmons(cipher,):
     plaintext = ''.join(random.choices(list(ENGLISH_FREQ.keys()),list(ENGLISH_FREQ.values()),k=100))
+    key=gen_key()
     ciphertext = cipher.encrypt(plaintext, key)
     plaintext_freq = ENGLISH_FREQ.most_common()
     ciphertext_freq = get_freq(ciphertext)
     diff=0
     for (freq_p,freq_c) in zip(plaintext_freq,ciphertext_freq):
         diff+=abs(freq_p[1]-freq_c[1])
-    return {'diff':diff,'freq':ciphertext_freq}
-    
+    return {'diff':diff,'freq':ciphertext_freq,'plaintext':plaintext}
+
+def number_to_block(number):
+    block=[(number//(1<<i))%2 for i in range(64)]
+    block.reverse()
+    return block
+
 def avalanche(cipher):
     block=gen_block()
     key=gen_key(8)
-    keys=cipher.generate_keys(key)
+    keys=list(cipher.generate_keys(key))
     bit_n = random.randint(0,63)
     block_altered = block^(1<<bit_n)
+    block=number_to_block(block)
+    block_altered=number_to_block(block_altered)
+
     diff=[]
     for i,j in zip(cipher.block_iter(block,keys),cipher.block_iter(block_altered,keys)):
-        diff.append(bin(i^j).count('1'))
-    return {'diff',diff}
+        diff.append(len(list(filter(lambda a:a[0]!=a[1], zip(i,j)))))
+    return {'diff':diff}
 
     
 if __name__ == '__main__':
     from main import AVAILABLE_CIPHERS
     for cipher in AVAILABLE_CIPHERS:
         cipher_module = __import__(cipher)
-        for i in range(100):
-            result=correctness(cipher_module)
-            if not result['passed']:
+        start=time.time()
+        for i in range(10):
+            try:
+                result=correctness(cipher_module)
+                if not result['passed']:
+                    print(result)
+                    break
+            except:
                 print(result)
                 break
         else:
-            print(cipher,'Passed Correctness')
-        if cipher_module.cipher_type == 'text':
-            print(simmons(cipher_module))
+            print(cipher,'Passed Correctness , Time taken %.3f'%(time.time()-start))
+        if cipher_module.cipher_type == 'block':
+            result=(avalanche(cipher_module))['diff']
+            plt.figure()
+            plt.bar(range(len(result)),result)
         else:
-            print(avalanche(cipher_module))
+            result= (simmons(cipher_module))
+            c=list(zip(*result['freq']))[1]
+            m=Counter(result['plaintext']).most_common(1)[0][1]
+            c=list(map(lambda x:x/m,c))
+            plt.plot(c,label=cipher)
+            plt.legend()
+    
+    plt.show()
+
 
