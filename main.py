@@ -9,7 +9,7 @@ import tkinter.ttk as ttk
 from tkinter.constants import *
 import test
 
-AVAILABLE_CIPHERS = ('atbash', 'caesar', 'vigenere','playfair','des')
+AVAILABLE_CIPHERS = ('atbash', 'caesar', 'vigenere', 'playfair', 'des')
 
 
 class CipherGUI:
@@ -40,8 +40,6 @@ class CipherGUI:
         ttk.Button(self.options, text="Simmons", command=self.on_simmons).grid(row=5, column=0)
         ttk.Button(self.options, text="Avalanche", command=self.on_avalanche).grid(row=5, column=1)
         ttk.Button(self.options, text="Clear", command=self.on_clear).grid(row=5, column=2)
-
-
 
     def create_textbox(self):
         self.textbox = tk.Tk()
@@ -90,47 +88,47 @@ class CipherGUI:
         self.ciphertext_string.set('')
         self.key_string.set('')
         self.plaintext_string.set('')
-        self.plot([1,123,1,132,231])
+        self.plot([1, 123, 1, 132, 231])
 
-    def on_simmons(self,_='unused'):
-        freq=test.get_freq(self.ciphertext_string.get())
+    def on_simmons(self, _='unused'):
+        freq = test.get_freq(self.ciphertext_string.get())
         self.plot(freq)
 
-    def on_avalanche(self,_='unused'):
-        cip=self.get_cipher()
+    def on_avalanche(self, _='unused'):
+        cip = self.get_cipher()
         if cip.cipher_type == 'block':
-            result=test.avalanche(cip)['diff']
+            result = test.avalanche(cip)['diff']
             print(len(result))
-            self.plot(zip(result, result),max(result))
+            self.plot(zip(result, result), max(result))
         else:
             print("Only For Block Ciphers")
-        
-    def plot(self,data,max_n=1):
-        plot_window=tk.Toplevel()
+
+    def plot(self, data, max_n=1):
+        plot_window = tk.Toplevel()
         data = list(data)
-        ma = max(data,key=lambda x:x[1])
+        ma = max(data, key=lambda x: x[1])
         print(ma)
-        c_width = len(data)*27
+        c_width = len(data) * 27
         c_height = 350
-        y_stretch = 15 
+        y_stretch = 15
         # gap between lower canvas edge and x axis
         y_gap = 20
         # stretch enough to get all data items in
-        x_stretch = 20*8 / len(data)
+        x_stretch = 20 * 8 / len(data)
         x_width = 15
         # gap between left canvas edge and y axis
         x_gap = 20
-        c = tk.Canvas(plot_window, width=c_width, height=c_height, bg= 'white')
+        c = tk.Canvas(plot_window, width=c_width, height=c_height, bg='white')
         c.pack()
-        for  x,(z,y) in enumerate(data):
+        for x, (z, y) in enumerate(data):
             y = y * 10 / ma[1]
             x0 = x * x_stretch + x * x_width + x_gap
             y0 = c_height - (y * y_stretch + y_gap)
             x1 = x * x_stretch + x * x_width + x_width + x_gap
             y1 = c_height - y_gap
             c.create_rectangle(x0, y0, x1, y1, fill="red")
-            c.create_text(x0+2, y0, anchor=tk.SW, text=str(z))
-            
+            c.create_text(x0 + 2, y0, anchor=tk.SW, text=str(z))
+
 
 if __name__ == '__main__':
-    c=CipherGUI()
+    c = CipherGUI()

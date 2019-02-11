@@ -14,6 +14,7 @@ Kt = 0.0385
 
 cipher_type = 'text'
 
+
 def encrypt(plaintext, key):
     key = map(lambda x: ord(x) - ord('a'), key.lower())
     return ''.join(list(map(lambda p: caesar.encrypt_letter(*p), zip(plaintext, cycle(key)))))

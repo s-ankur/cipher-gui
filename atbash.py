@@ -12,6 +12,7 @@ import string
 
 cipher_type = 'text'
 
+
 def encrypt_letter(letter):
     if letter.islower():
         return string.ascii_lowercase[-(1 + string.ascii_lowercase.index(letter))]

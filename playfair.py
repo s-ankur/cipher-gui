@@ -3,7 +3,8 @@ Play Fair Cipher
 """
 import re
 
-cipher_type= 'text'
+cipher_type = 'text'
+
 
 def generateTable(key=''):
     alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'
@@ -22,22 +23,23 @@ def generateTable(key=''):
                 alphabet = alphabet[1:]
     return table
 
-def encrypt(words,key ):
-    key=key.lower()
+
+def encrypt(words, key):
+    key = key.lower()
     table = generateTable(key)
     cipher = ''
     words = re.sub(r'[\WJ]', '', words.upper())
     text = ''
-    
+
     for i in range(0, len(words) - 1):
         text += words[i]
-        if words[i] == words[i+1]:
+        if words[i] == words[i + 1]:
             text += 'X'
 
-    text += words[i+1]
+    text += words[i + 1]
 
     for i in range(0, len(text), 2):
-        digraphs = text[i:i+2]
+        digraphs = text[i:i + 2]
         a, b = digraphs[0], 'X'
         if len(digraphs) > 1:
             b = digraphs[1]
@@ -45,24 +47,25 @@ def encrypt(words,key ):
         b = position(table, b)
 
         if (a[0] == b[0]):
-            cipher += table[a[0]][(a[1] + 1)%5] + table[b[0]][(b[1] + 1)%5]
+            cipher += table[a[0]][(a[1] + 1) % 5] + table[b[0]][(b[1] + 1) % 5]
         elif (a[1] == b[1]):
-            cipher += table[(a[0] + 1)%5][a[1]] + table[(b[0] + 1)%5][b[1]]
+            cipher += table[(a[0] + 1) % 5][a[1]] + table[(b[0] + 1) % 5][b[1]]
         else:
             cipher += table[a[0]][b[1]] + table[b[0]][a[1]]
 
-    return cipher;
+    return cipher
 
-def decrypt(text,key ):
-    key=key.lower()
+
+def decrypt(text, key):
+    key = key.lower()
     table = generateTable(key)
     text = re.sub(r'[\WJ]', '', text.upper())
     words = ''
 
     for i in range(0, len(text), 2):
-        digraphs = text[i:i+2]
+        digraphs = text[i:i + 2]
         if len(digraphs) != 2:
-            print('cipher text is not right');
+            print('cipher text is not right')
             return
         a, b = digraphs[0], digraphs[1]
         a = position(table, a)
@@ -77,11 +80,9 @@ def decrypt(text,key ):
     return words[:-1]
 
 
-
 def position(table, ch):
     for row in range(5):
         for col in range(5):
             if table[row][col] == ch:
                 return [row, col]
     return [row, col]
-
