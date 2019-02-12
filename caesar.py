@@ -14,6 +14,7 @@ import string
 FREQ_LETTERS = 'ETAOINSRHDLUCMFYWGPBVKXQJZ'
 
 cipher_type = 'text'
+cipher_alphabet = string.printable
 
 
 def encrypt_letter(letter, key):
