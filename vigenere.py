@@ -5,9 +5,11 @@ The Vigenère cipher is a method of encrypting alphabetic text by using a
 series of interwoven Caesar ciphers, based on the letters of a keyword.
 It is a form of polyalphabetic substitution.
 """
+import random
 from itertools import cycle
 from collections import Counter
 import caesar
+
 
 Kp = 0.067
 Kt = 0.0385
@@ -31,7 +33,7 @@ def crack(ciphertext):
     sigma = sum(map(lambda freq: freq * (freq - 1), ciphertext_freq.values()))
     Ko = sigma / (N * (N - 1))
     length = (Kp - Kt) / (Ko - Kt)
-    length = round(length)
+    length = random.choice([int(length),int(length)+1])
     key = []
     for i in range(length):
         column = ciphertext[i::length]
