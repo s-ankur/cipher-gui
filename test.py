@@ -41,7 +41,7 @@ ENGLISH_FREQ = Counter({
 })
 
 
-def gen_text(n=160,alphabet = string.ascii_uppercase):
+def gen_text(n=176,alphabet = string.printable):
     return "".join(random.choices(alphabet,k=n))
 
 def gen_key(n=8,alphabet = string.ascii_letters):
@@ -67,7 +67,8 @@ def correctness(cipher):
     start = time.time()
     incorrect = []
     for i in range(10):
-        plaintext = gen_text()
+        alphabet= getattr(cipher,'alphabet',string.ascii_uppercase )
+        plaintext = gen_text(alphabet=alphabet)
         key = gen_key()
         ciphertext = cipher.encrypt(plaintext, key)
         decrypttext = cipher.decrypt(ciphertext, key)
@@ -107,20 +108,26 @@ def avalanche(cipher):
 
 if __name__ == '__main__':
     from main import AVAILABLE_CIPHERS
+    results={}
     for cipher in AVAILABLE_CIPHERS:
         try:
             cipher_module = __import__(cipher)
             result = correctness(cipher_module)
+            results[cipher]=result  
             print("Cipher %s passed correctness with score %d%%"%(cipher,result['score']))
             if cipher_module.cipher_type == 'block':
                 result = (avalanche(cipher_module))
                 print("Cipher %s passed avalanche with score %d"%(cipher,result['score']))
                 plt.figure('Avalanche')
+                plt.xlabel('Number of Rounds')
+                plt.ylabel('Number of Bit Flips')
                 plt.bar(range(len(result['flips'])), result['flips'])
             else:
                 result = simmons(cipher_module)
                 print("Cipher %s passed simmons with score %d"%(cipher,result['score']))
                 plt.figure('Simmons')
+                plt.xlabel('Alphabet')
+                plt.ylabel('Relative Frequency')
                 plt.plot(result['relative_freq'], label=cipher)
                 plt.legend()
         except Exception as e:
