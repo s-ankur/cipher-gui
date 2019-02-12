@@ -98,7 +98,6 @@ class CipherGUI:
         cip = self.get_cipher()
         if cip.cipher_type == 'block':
             result = test.avalanche(cip)['diff']
-            print(len(result))
             self.plot(zip(result, result), max(result))
         else:
             print("Only For Block Ciphers")
@@ -107,7 +106,6 @@ class CipherGUI:
         plot_window = tk.Toplevel()
         data = list(data)
         ma = max(data, key=lambda x: x[1])
-        print(ma)
         c_width = len(data) * 27
         c_height = 350
         y_stretch = 15

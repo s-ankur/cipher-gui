@@ -35,7 +35,6 @@ def decrypt(ciphertext, key):
 
 
 def lcs(X, Y):
-    # find the length of the strings
     m = len(X)
     n = len(Y)
 
