@@ -11,6 +11,7 @@ letter becomes the last letter, the second letter becomes the second to last let
 import string
 
 cipher_type = 'text'
+cipher_alphabet = string.printable
 
 
 def encrypt_letter(letter):

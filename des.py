@@ -3,9 +3,14 @@
 """
 DES CIPHER
 Key should be 8 characters
+The Data Encryption Standard (DES) is a symmetric-key block cipher published by NIST.
+DES is an implementation of a Feistel Cipher. It uses 16 round Feistel structure.
+The block size is 64-bit. Though, key length is 64-bit, DES has an effective key length of 56 bits,
+since 8 of the 64 bits of the key are not used by the encryption algorithm 
 """
 
 cipher_type = 'block'
+
 
 N_ROUNDS = 16
 
@@ -158,7 +163,7 @@ def permute(block, table):
 
 def add_padding(text):
     pad_len = len(text) % 8
-    text += pad_len * chr(pad_len)
+    text += pad_len * ' '
     return text
 
 def validate_text(text):
@@ -218,11 +223,12 @@ def feistel_network(text,keys):
     return ''.join(text_output)
 
 def encrypt(plaintext,key):
-    plaintext=add_padding(plaintext)
+    validate_text(plaintext)
     keys = list(generate_keys(key))
     return feistel_network(plaintext,keys)
 
 def decrypt(ciphertext,key):
+    validate_text(ciphertext)
     keys = list(generate_keys(key))
     keys.reverse()
     plaintext = feistel_network(ciphertext,keys)
