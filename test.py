@@ -40,7 +40,6 @@ ENGLISH_FREQ = Counter({
     'Z': 0.00074,
 })
 
-
 def gen_text(n=160,alphabet = string.ascii_uppercase):
     return "".join(random.choices(alphabet,k=n))
 
@@ -49,6 +48,8 @@ def gen_key(n=8,alphabet = string.ascii_letters):
 
 def gen_block(n=8):
     return random.getrandbits(n * 8)
+
+
 
 def get_freq(text):
     freq = Counter(string.ascii_uppercase)
@@ -71,9 +72,8 @@ def correctness(cipher):
             incorrect.append({'plaintext': plaintext, 'key': key, 'ciphertext': ciphertext, 'decrypttext': decrypttext})
     return {'score': (100-len(incorrect))/100 , 'incorrect':incorrect,'time':time.time()-start}
 
-
 def simmons(cipher,):
-    plaintext = ''.join(random.choices(list(ENGLISH_FREQ.keys()), list(ENGLISH_FREQ.values()), k=10000))
+    plaintext = ''.join(random.choices(list(ENGLISH_FREQ.keys()), list(ENGLISH_FREQ.values()), k=100))
     key = gen_key()
     ciphertext = cipher.encrypt(plaintext, key)
     plaintext_freq = ENGLISH_FREQ.most_common()
@@ -85,7 +85,6 @@ def simmons(cipher,):
         score += abs(freq_p[1] - freq_c[1])
     relative_freq = list(map(lambda x:x[1]/max_plaintext_freq,ciphertext_freq))
     return {'score': score, 'ciphertext_freq': ciphertext_freq, 'plaintext': plaintext,'relative_freq':relative_freq}
-
 
 def number_to_block(number):
     block = [(number // (1 << i)) % 2 for i in range(64)]
@@ -101,7 +100,6 @@ def avalanche(cipher):
     block_altered = block ^ (1 << bit_n)
     block = number_to_block(block)
     block_altered = number_to_block(block_altered)
-
     flips = []
     for i, j in zip(cipher.block_iter(block, keys), cipher.block_iter(block_altered, keys)):
         flips.append(len(list(filter(lambda a: a[0] != a[1], zip(i, j)))))
@@ -126,5 +124,4 @@ if __name__ == '__main__':
         except Exception as e:
             raise
             print("Cipher %s caused exception",str(e))
-
     plt.show()

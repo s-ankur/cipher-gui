@@ -16,7 +16,6 @@ FREQ_LETTERS = 'ETAOINSRHDLUCMFYWGPBVKXQJZ'
 cipher_type = 'text'
 alphabet = string.printable
 
-
 def encrypt_letter(letter, key):
     if letter.islower():
         return chr((ord(letter) + key - ord('a')) % 26 + ord('a'))
