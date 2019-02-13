@@ -86,15 +86,15 @@ def generate_keys(key):
         yield permute(left + right, CP_2)
 
 
-def string_to_bit_array(text):  # Convert a string into a list of bits
+def string_to_bit_array(text):  
     array = list()
     for char in text:
-        binval = binvalue(char, 8)  # Get the char value on one byte
-        array.extend([int(x) for x in list(binval)])  # Add the bits to the final list
+        binval = binvalue(char, 8) 
+        array.extend([int(x) for x in list(binval)])  
     return array
 
 
-def bit_array_to_string(array):  # Recreate the string from the bit array
+def bit_array_to_string(array):  
     res = ''.join([chr(int(y, 2)) for y in [''.join([str(x) for x in bytes]) for bytes in nsplit(array, 8)]])
     return res
 

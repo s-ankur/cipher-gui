@@ -131,7 +131,6 @@ if __name__ == '__main__':
                 plt.plot(result['relative_freq'], label=cipher)
                 plt.legend()
         except Exception as e:
-            raise
             print("Cipher %s caused exception",str(e))
 
     plt.show()
