@@ -9,7 +9,8 @@ import string
 import numpy as np
 
 alphabet = string.ascii_uppercase
-cipher_type = string 
+cipher_type = string
+key_length = 9
 
 def modular_inverse(A,p):       
   n=len(A)

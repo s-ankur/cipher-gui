@@ -5,7 +5,7 @@ Common Testing Program for all ciphers
 """
 import string
 import random
-from collections import Counter
+from collections import Counter,defaultdict
 import time
 from pprint import pprint
 import matplotlib.pyplot as plt
@@ -40,6 +40,8 @@ ENGLISH_FREQ = Counter({
     'Z': 0.00074,
 })
 
+def gen_english(n=100000):
+    return ''.join(random.choices(list(ENGLISH_FREQ.keys()), list(ENGLISH_FREQ.values()), k=n))
 
 def gen_text(n=176,alphabet = string.printable):
     return "".join(random.choices(alphabet,k=n))
@@ -78,7 +80,7 @@ def correctness(cipher):
 
 
 def simmons(cipher,):
-    plaintext = ''.join(random.choices(list(ENGLISH_FREQ.keys()), list(ENGLISH_FREQ.values()), k=100000))
+    plaintext = gen_english()
     key = gen_key()
     ciphertext = cipher.encrypt(plaintext, key)
     plaintext_freq = ENGLISH_FREQ.most_common()
@@ -89,7 +91,7 @@ def simmons(cipher,):
     for (freq_p, freq_c) in zip(plaintext_freq, ciphertext_freq):
         score += abs(freq_p[1] - freq_c[1])
     relative_freq = list(map(lambda x:x[1]/max_plaintext_freq,ciphertext_freq))
-    return {'score': score/700, 'ciphertext_freq': ciphertext_freq, 'plaintext': plaintext,'relative_freq':relative_freq}
+    return {'score': score/700, 'ciphertext_freq': ciphertext_freq ,'relative_freq':relative_freq}
 
 
 def avalanche(cipher):
@@ -105,6 +107,30 @@ def avalanche(cipher):
         flips.append(len(list(filter(lambda a: a[0] != a[1], zip(i, j)))))
     return {'score':sum(flips)/16,'flips': flips}
 
+Kp = 0.067
+Kt = 0.0385
+def kasiski_length(ciphertext):
+    ciphertext_freq = Counter(filter(str.isalpha, ciphertext.upper()))
+    N = sum(ciphertext_freq.values())
+    sigma = sum(map(lambda freq: freq * (freq - 1), ciphertext_freq.values()))
+    Ko = sigma / (N * (N - 1))
+    length = (Kp - Kt) / (Ko - Kt)
+    return length
+
+
+def kasiski(cipher):
+    score = 0
+    true_length =[]
+    pred_length = []
+    for i in range(100):
+        plaintext = gen_english(1000)
+        key = gen_key(getattr(cipher,'key_length',random.randint(1,8)))
+        ciphertext= cipher.encrypt(plaintext,key)
+        length = kasiski_length(ciphertext)
+        score+= abs(len(key)-length)
+        true_length.append(len(key))
+        pred_length.append(length)
+    return {'score':score/len(true_length),'true_length':true_length,'pred_length':pred_length}
 
 if __name__ == '__main__':
     from main import AVAILABLE_CIPHERS
@@ -113,23 +139,30 @@ if __name__ == '__main__':
         try:
             cipher_module = __import__(cipher)
             result = correctness(cipher_module)
-            results[cipher]=result  
-            print("Cipher %s passed correctness with score %d%%"%(cipher,result['score']))
+            results['correctness '+cipher] = result
+            print("Cipher %s passed correctness with score %.2f%%"%(cipher,result['score']))
             if cipher_module.cipher_type == 'block':
-                result = (avalanche(cipher_module))
-                print("Cipher %s passed avalanche with score %d"%(cipher,result['score']))
+                result = avalanche(cipher_module)
+                results['avalanche '+cipher] = result
+                print("Cipher %s passed avalanche with score %.2f"%(cipher,result['score']))
                 plt.figure('Avalanche')
                 plt.xlabel('Number of Rounds')
                 plt.ylabel('Number of Bit Flips')
                 plt.bar(range(len(result['flips'])), result['flips'])
             else:
                 result = simmons(cipher_module)
-                print("Cipher %s passed simmons with score %d"%(cipher,result['score']))
+                results['simmons ' + cipher]= result
+                print("Cipher %s passed simmons with score %.2f"%(cipher,result['score']))
                 plt.figure('Simmons')
                 plt.xlabel('Alphabet')
                 plt.ylabel('Relative Frequency')
                 plt.plot(result['relative_freq'], label=cipher)
                 plt.legend()
+                result = kasiski(cipher_module)
+                results['kasiski '+cipher]= result
+                print("Cipher %s passed kasisiki with score %.2f"%(cipher,result['score']))
+                plt.figure('Kasiski')
+                plt.bar([cipher],[result['score']])
         except Exception as e:
             print("Cipher %s caused exception",str(e))
 

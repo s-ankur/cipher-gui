@@ -9,10 +9,7 @@ import random
 from itertools import cycle
 from collections import Counter
 import caesar
-
-
-Kp = 0.067
-Kt = 0.0385
+import test
 
 cipher_type = 'text'
 
@@ -28,11 +25,7 @@ def decrypt(ciphertext, key):
 
 
 def crack(ciphertext):
-    ciphertext_freq = Counter(filter(str.isalpha, ciphertext.lower()))
-    N = sum(ciphertext_freq.values())
-    sigma = sum(map(lambda freq: freq * (freq - 1), ciphertext_freq.values()))
-    Ko = sigma / (N * (N - 1))
-    length = (Kp - Kt) / (Ko - Kt)
+    length = test.kasiski_length(ciphertext)
     length = random.choice([int(length),int(length)+1])
     key = []
     for i in range(length):

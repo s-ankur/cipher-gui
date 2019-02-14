@@ -11,6 +11,7 @@ since 8 of the 64 bits of the key are not used by the encryption algorithm
 from des_blocks import *
 
 cipher_type = 'block'
+key_length = 8
 
 
 N_ROUNDS = 16

@@ -12,6 +12,7 @@ import string
 
 cipher_type = 'text'
 cipher_alphabet = string.printable
+key_length = 1
 
 
 def encrypt_letter(letter):

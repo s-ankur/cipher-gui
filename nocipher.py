@@ -7,6 +7,7 @@ import string
 
 alphabet = string.printable
 cipher_type = 'text'
+key_length = 1
 
 def encrypt(plaintext,key):
     return plaintext
