@@ -6,7 +6,7 @@ Key should be 8 characters
 The Data Encryption Standard (DES) is a symmetric-key block cipher published by NIST.
 DES is an implementation of a Feistel Cipher. It uses 16 round Feistel structure.
 The block size is 64-bit. Though, key length is 64-bit, DES has an effective key length of 56 bits,
-since 8 of the 64 bits of the key are not used by the encryption algorithm 
+since 8 of the 64 bits of the key are not used by the encryption algorithm
 """
 from des_blocks import *
 
@@ -87,15 +87,15 @@ def generate_keys(key):
         yield permute(left + right, CP_2)
 
 
-def string_to_bit_array(text):  
+def string_to_bit_array(text):
     array = list()
     for char in text:
-        binval = binvalue(char, 8) 
-        array.extend([int(x) for x in list(binval)])  
+        binval = binvalue(char, 8)
+        array.extend([int(x) for x in list(binval)])
     return array
 
 
-def bit_array_to_string(array):  
+def bit_array_to_string(array):
     res = ''.join([chr(int(y, 2)) for y in [''.join([str(x) for x in bytes]) for bytes in nsplit(array, 8)]])
     return res
 
@@ -127,12 +127,14 @@ def feistel_network(text, keys):
         text_output.append(text_block)
     return ''.join(text_output)
 
-def encrypt(plaintext,key):
+
+def encrypt(plaintext, key):
     validate_text(plaintext)
     keys = list(generate_keys(key))
     return feistel_network(plaintext, keys)
 
-def decrypt(ciphertext,key):
+
+def decrypt(ciphertext, key):
     validate_text(ciphertext)
     keys = list(generate_keys(key))
     keys.reverse()

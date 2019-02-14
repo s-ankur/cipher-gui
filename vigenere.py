@@ -26,7 +26,7 @@ def decrypt(ciphertext, key):
 
 def crack(ciphertext):
     length = test.kasiski_length(ciphertext)
-    length = random.choice([int(length),int(length)+1])
+    length = random.choice([int(length), int(length) + 1])
     key = []
     for i in range(length):
         column = ciphertext[i::length]

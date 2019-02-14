@@ -5,6 +5,7 @@ import re
 
 cipher_type = 'text'
 
+
 def generateTable(key=''):
     alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'
     table = [[0] * 5 for row in range(5)]

@@ -9,10 +9,13 @@ alphabet = string.printable
 cipher_type = 'text'
 key_length = 1
 
-def encrypt(plaintext,key):
+
+def encrypt(plaintext, key):
     return plaintext
 
+
 decrypt = encrypt
+
 
 def crack(ciphertext):
     return ciphertext, ''
