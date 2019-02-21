@@ -4,7 +4,7 @@
 Computer Security Assignment __(CSE-537)__ <br>
 _Poorly encrypted things_<br>
 Currently supports atbash, caesar and vigenere cipher <br>
-Currently only correctness of each algorithm is tested but will add statistical tests soon.
+Currently  correctness of each algorithm is tested and statistical tests are performed.
 
 # Usage
 
@@ -16,3 +16,5 @@ To test all the algorithms, run<br>
 
 # Demo
 ![Demo](demo.png)
+![Simmons](simmons.png)
+![Avalanche](avalanche.png)
