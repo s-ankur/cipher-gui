@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
-Encrypt Badly
+Encrypt Badly: Main Gui
 """
 import textwrap
 import tkinter as tk
