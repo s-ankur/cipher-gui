@@ -110,9 +110,25 @@ def avalanche(cipher):
     block = number_to_block(block)
     block_altered = number_to_block(block_altered)
     flips = []
+    file = open('avalanche_block.txt','w')
+    print("Block =",''.join(map(str,block))," Flipped ", bit_n,' th',file=file)
     for i, j in zip(cipher.block_iter(block, keys), cipher.block_iter(block_altered, keys)):
         flips.append(len(list(filter(lambda a: a[0] != a[1], zip(i, j)))))
-    return {'score': sum(flips) / 16, 'flips': flips}
+        print(''.join(map(str,i)),''.join(map(str,j)),"bits flipped: ",flips[-1],file=file)
+    key = cipher.string_to_bit_array(key)
+    key_flip = key[:]
+    i=random.randint(0,len(key)-1)
+    key_flip[i]= 1- key_flip[i]
+    key,key_flip = cipher.bit_array_to_string(key),cipher.bit_array_to_string(key_flip)
+    key_flips = []
+    keys = list(cipher.generate_keys(key))
+    keys_flip = list(cipher.generate_keys(key_flip))
+    file = open('avalanche_key.txt','w')
+    print("Key =",''.join(map(str,block))," Flipped ", i,' th',file=file)
+    for i, j in zip(cipher.block_iter(block, keys), cipher.block_iter(block, keys_flip)):
+        key_flips.append(len(list(filter(lambda a: a[0] != a[1], zip(i, j)))))
+        print(''.join(map(str,i)),''.join(map(str,j)),"bits flipped: ",key_flips[-1],file=file)
+    return {'score': sum(flips) / 16, 'flips': flips, 'key_flips':key_flips}
 
 
 Kp = 0.067
@@ -160,6 +176,10 @@ if __name__ == '__main__':
                 plt.xlabel('Number of Rounds')
                 plt.ylabel('Number of Bit Flips')
                 plt.bar(range(len(result['flips'])), result['flips'])
+                plt.figure('Avalanche Key')
+                plt.xlabel('Number of Rounds')
+                plt.ylabel('Number of Key Bit Flips')
+                plt.bar(range(len(result['key_flips'])), result['key_flips'])
             else:
                 result = simmons(cipher_module)
                 results['simmons ' + cipher] = result
@@ -169,12 +189,8 @@ if __name__ == '__main__':
                 plt.ylabel('Relative Frequency')
                 plt.plot(result['relative_freq'], label=cipher)
                 plt.legend()
-                result = kasiski(cipher_module)
-                results['kasiski ' + cipher] = result
-                print("Cipher %s passed kasisiki with score %.2f" % (cipher, result['score']))
-                plt.figure('Kasiski')
-                plt.bar([cipher], [result['score']])
         except Exception as e:
-            print("Cipher %s caused exception", str(e))
+           # print("Cipher %s caused exception", str(e))
+           raise
 
     plt.show()
