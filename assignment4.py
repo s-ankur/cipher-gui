@@ -1,25 +1,26 @@
-import matplotlib.pyplot as plt
-from scipy.stats import chi2
-from scipy.stats import norm
-from scipy.stats import kstest
-from statistics import mean
-from statistics import stdev
 from math import sqrt
+from time import time
 from itertools import islice
+from statistics import mean,stdev
+from scipy.stats import chi2,norm
+import numpy as np
+import matplotlib.pyplot as plt
 from Crypto.Cipher import DES3
 from Crypto import Random
 from Crypto.Util.strxor import strxor
-from scipy.stats import chi2
-from time import time
 
 
-def lcg(a=3, c=1, m=31, rand=1):
+def lcg(initial = 1, constants =[3,1], m=31 ):
+    rand = initial
+    a,c =constants
     while True:
         rand = (a * rand + c) % m
-        yield rand, rand / m
+        yield rand / m
 
 
-def ansi_x9_17(V, key):
+def ansi(initial = Random.new().read(8) , constants = [Random.new().read(16)]):
+    V = initial
+    key = constants[0]
     des3 = DES3.new(key, DES3.MODE_ECB)
     while True:
         EDT = des3.encrypt(hex(int(time() * 10**6))[-8:])
@@ -28,27 +29,20 @@ def ansi_x9_17(V, key):
         yield int(V.hex(), 16)
 
 
-def bbs(s=101355, p=383, q=503):
+def bbs(initial =101355, constants =  [383,503]):
+    s = initial
+    p, q = constants
     n = p * q
     x = (s * s) % n
     while True:
         x = (x * x) % n
         b = x % 2
-        yield x, x / n, b
+        yield x / n
 
 
-n = 250
-ls3 = []
-ls1 = []
-ls4 = []
-for i, j in zip(range(n), lcg(5, 13, 31, 7)):
-    ls1.append(j[1])
-    ls3.append(j[0])
-    ls4.append(j[0])
-
-
-def spectral(ls1):
-    plt.scatter(ls1[1:], ls1[:-1])
+def spectral(numbers):
+    plt.scatter(numbers[1:], numbers[:-1])
+    plt.show()
 
 
 def count(list1, l, r):
@@ -59,52 +53,50 @@ def count(list1, l, r):
     return c
 
 
-def chisquare(ls1, alpha=0.01, k=10):
-    ls2 = []
-    y = float(k)
+def chisquare(numbers, alpha=0.01, k=10):
+    counts = []
     for i in range(k):
-        ls2.append(count(ls1, (i / y), (i + 1) / y))
-        # print(ls2[i])
+        counts.append(count(numbers, (i / k), (i + 1) /k))
     d = 0
-    l = len(ls1)
+    l = len(numbers)
     exp = l / k
-    print(exp)
     for i in range(k):
-        err = (ls2[i] - exp)**2
+        err = (counts[i] - exp)**2
         d += err / exp
     stat = d
     critical = chi2.ppf(1 - alpha, k - 1)
-    print(stat)
-    print(critical)
     if abs(stat) >= critical:
         print('Dependent (reject H0)')
     else:
         print('Independent (fail to reject H0)')
-# chisquare(ls1,0.05,20)
 
-
-def ks_test(ls3):
-    average = mean(ls3)
-    print(average)
-    dev = stdev(ls3)
-    print(dev)
-    l = len(ls3)
+def ks_test(numbers):
+    average = mean(numbers)
+    dev = stdev(numbers)
+    l = len(numbers)
     for i in range(l):
-        ls3[i] = (ls3[i] - average) / dev
-    ls3.sort()
+        numbers[i] = (numbers[i] - average) / dev
+    numbers.sort()
     normal = []
     diff = []
     for i in range(l):
-        normal.append(norm.cdf(ls3[i]))
+        normal.append(norm.cdf(numbers[i]))
         diff.append(abs((i + 1) / l - normal[i]))
     d = max(diff)
     critical = 1.36 / sqrt(n)
-    print(d)
-    print(critical)
     if d >= critical:
-        print('Reject H0')
+        print('Dependent (reject H0)')
     else:
-        print('Fail to reject H0')
+        print('Independent (fail to reject H0)')
 
+if __name__ == "__main__":
+    n =1000
+    lcg_numbers=list(islice(lcg(),n))
+    bbs_numbers=list(islice(bbs(),n))
+    ansi_numbers=list(islice(ansi(),n))
+    spectral(lcg_numbers)
+    for numbers in lcg_numbers,bbs_numbers,ansi_numbers:
+        ks_test(numbers)
+        chisquare(numbers)
 
-ks_test(ls3)
+    
